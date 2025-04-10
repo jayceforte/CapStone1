@@ -1,0 +1,16 @@
+{
+  "name": "capstone1",
+  "version": "1.0.0",
+  "description": "server json",
+  "repository": {
+    "type": "git",
+    "url": "CapStone"
+  },
+  "license": "ISC",
+  "author": "jayceforte",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
