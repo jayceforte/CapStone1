@@ -6,7 +6,10 @@ export default function Home() {
     const [items, setItems] = useState([]);
   
     useEffect(() => {
-      get("/items").then(res => setItems(res.data));
+      fetch("http://localhost:4000/api/items")
+      .then((res) => res.json())
+      .then((data) => setItems(data))
+      .catch((err) => console.error(err));
     }, []);
   
     return (

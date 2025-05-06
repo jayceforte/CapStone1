@@ -1,10 +1,13 @@
-require('dotenv').config();
-const fetch = require('node-fetch');
-const BASE_URL = "http://localhost:3000/api";
 
 
-const apiKey = process.env.API_KEY;
-const baseurl = process.env.BASE_URL;
+const baseUrl = "http://localhost:4000";
+
+
+
+const API_BASE = import.meta.env.VITE_API_BASE;
+const apiKey = import.meta.env.VITE_API_KEY;
+
+
 console.log('API Key:',apiKey);
 console.log('Base URL:' ,baseUrl)
 
@@ -25,7 +28,7 @@ async function fetchData () {
     }
 }
 export async function apiFetch(path, options = {}) {
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const res = await fetch("http://localhost:4000/api/items", {
       credentials: "include", 
       headers: {
         "Content-Type": "application/json",
