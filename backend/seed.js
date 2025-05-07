@@ -48,6 +48,7 @@ async function seed() {
       ["steph", password2]
     );
 
+    
     const chrisId = reschris.rows[0].id;
     const stephId = ressteph.rows[0].id;
 

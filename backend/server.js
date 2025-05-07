@@ -19,19 +19,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
-app.get("/reviews", async (req, res) => {
-  try {
-    const result = await client.query("SELECT * FROM reviews ORDER BY created_at DESC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Error fetching user reviews:", err);
-    res.status(500).json({ error: "Failed to fetch user reviews" });
-  }
+app.get("/reviews", (req, res) => {
+  res.json([{ id: 1, content: "This is a review", rating: 5 }]);
 });
+
 app.post("/reviews", async (req, res) => {
   const { user_id, content, rating } = req.body;
 
@@ -52,6 +48,46 @@ app.post("/reviews", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+try {
+  const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
+  const user = result.rows[0];
+
+  if (!user || user.password !== password) {
+    return res.status(401).json({ error: "Invalid credentials" });
+  }
+
+  req.session.userId = user.id;
+  res.json({ message: "Login successful" });
+} catch(err){
+  console.error("login Error", err);
+  res.status(500).json({error: "Server error when attempting login"});
+}
+});
+
+app.post("/signup", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
+  try {
+    const result = await client.query(
+      "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
+      [email, password]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Signup error:", err);
+    res.status(500).json({ error: "Failed to create user" });
+  }
+});
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -60,6 +96,7 @@ app.use(session({
 }));
 
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on http://localhost:${process.env.PORT}`);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

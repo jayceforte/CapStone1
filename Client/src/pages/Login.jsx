@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../api";
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -14,14 +13,27 @@ export default function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
     setError(null);
+
     try {
-      await apiFetch("/auth/login", {
+      const res = await fetch("http://localhost:4000/login", {
         method: "POST",
-        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(form)
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
       navigate("/"); 
     } catch (err) {
-      setError(err.message);
+      console.error("API Error:", err.message);
+      setError("Login failed");
     }
   };
 
@@ -30,9 +42,9 @@ export default function Login() {
       <h1>Log In</h1>
       <input
         type="text"
-        name="username"
-        placeholder="Username"
-        value={form.username}
+        name="email"
+        placeholder="Email"
+        value={form.email}
         onChange={handleChange}
         required
       />

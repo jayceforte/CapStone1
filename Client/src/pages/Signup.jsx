@@ -1,27 +1,38 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../api";
 
 export default function Signup() {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
     try {
-      await apiFetch("/auth/signup", {
+      const response = await fetch("http://localhost:4000/signup", {
         method: "POST",
-        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
       });
-      navigate("/"); 
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
+      navigate("/login");
     } catch (err) {
-      setError(err.message);
+      console.error("Signup error:", err.message);
+      setError("API Error: " + err.message);
     }
   };
 
@@ -29,10 +40,10 @@ export default function Signup() {
     <form onSubmit={handleSubmit}>
       <h1>Sign Up</h1>
       <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={form.username}
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={form.email}
         onChange={handleChange}
         required
       />
@@ -45,7 +56,7 @@ export default function Signup() {
         required
       />
       <button type="submit">Create Your Account</button>
-      {error && <p style={{ color: "blue" }}>{error}</p>}
+      {error && <p style={{ color: "purple" }}>{error}</p>}
     </form>
   );
 }
