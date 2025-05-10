@@ -1,8 +1,8 @@
-import express from  "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import pg from "pg";
-import session from "express-session";
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const session = require("express-session");
+const pg = require("pg");
 
 
 
@@ -12,7 +12,15 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
-await client.connect();
+
+
+
+async function init() {
+  await client.connect();
+  console.log("Connected to DB");
+}
+
+init();
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -135,6 +143,4 @@ app.post("/signup", async (req, res) => {
 
 
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+module.exports = app;

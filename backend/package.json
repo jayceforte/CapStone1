@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -14,7 +15,9 @@
     "express": "^4.21.2",
     "express-session": "^1.17.3",
     "pg": "^8.11.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0"
   }
-
-
 }
