@@ -1,0 +1,1 @@
+This Capstone project is a review site meant for conusmer to come and view reviews on A restaurant they plan on visiting! I hop

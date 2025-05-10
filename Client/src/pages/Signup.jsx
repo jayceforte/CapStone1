@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -39,6 +39,14 @@ export default function Signup() {
   return (
     <form onSubmit={handleSubmit}>
       <h1>Sign Up</h1>
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        value={form.username}
+        onChange={handleChange}
+        required
+      />
       <input
         type="email"
         name="email"

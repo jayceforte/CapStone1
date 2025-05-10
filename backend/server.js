@@ -5,6 +5,7 @@ import pg from "pg";
 import session from "express-session";
 
 
+
 dotenv.config();
 
 const app = express();
@@ -20,16 +21,35 @@ app.use(cors({
 app.use(express.json());
 
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, 
+    httpOnly: true,
+    sameSite: "lax"
+  }
+}));
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
-app.get("/reviews", (req, res) => {
-  res.json([{ id: 1, content: "This is a review", rating: 5 }]);
+app.get("/me", (req, res) => {
+  if (req.session.userId) {
+    res.json({ userId: req.session.userId });
+  } else {
+    res.status(401).json({ error: "Not logged in" });
+  }
 });
 
+
 app.post("/reviews", async (req, res) => {
-  const { user_id, content, rating } = req.body;
+  const user_id = req.session.userId;
+  const {  content, rating } = req.body;
+  
+  console.log("SESSION:", req.session);
+  console.log("BODY:", req.body);
 
   if (!user_id || !content || !rating) {
     return res.status(400).json({ error: "Missing fields in request body" });
@@ -45,6 +65,22 @@ app.post("/reviews", async (req, res) => {
   } catch (err) {
     console.error("Error fetching user review:", err);
     res.status(500).json({ error: "Failed to fetch user review" });
+  }
+});
+
+app.get("/reviews", async (req, res) => {
+  try {
+    const result = await client.query(
+      `SELECT r.*, u.username 
+       FROM reviews r
+       JOIN users u ON r.user_id = u.id
+       ORDER BY r.created_at DESC`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error getting reviews:", err);
+    res.status(500).json({ error: "Failed to find reviews" });
   }
 });
 
@@ -71,29 +107,31 @@ try {
 });
 
 app.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+  const { username, email, password } = req.body;
 
-  if (!email || !password) {
+  
+  if (!username || !email || !password) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
   try {
+    console.log("Signup payload:", { username, email, password });
+
     const result = await client.query(
-      "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
-      [email, password]
+      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *`,
+      [username, email, password]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    if (err.code === '23505') {
+      res.status(400).json({ error: "Username or email already exists" });
+    } 
     console.error("Signup error:", err);
     res.status(500).json({ error: "Failed to create user" });
   }
 });
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
+
 
 
 

@@ -1,47 +1,70 @@
 
 
-const baseUrl = "http://localhost:4000";
+const BASE_URL = "http://localhost:4000";
 
 
-
-const API_BASE = import.meta.env.VITE_API_BASE;
-const apiKey = import.meta.env.VITE_API_KEY;
-
-
-console.log('API Key:',apiKey);
-console.log('Base URL:' ,baseUrl)
-
-async function fetchData () {
-    try{
-        const response = await fetch(`${baseUrl}/data`, {
-            headers: {
-                'Authorization': `Bearer ${apiKey}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error (`HTTP error Status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data);
-    } catch (error){
-        console.error('Fetch error:', error.message);
-    }
-}
 export async function apiFetch(path, options = {}) {
-    const res = await fetch("http://localhost:4000/api/items", {
-      credentials: "include", 
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-      ...options,
-    });
-  
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({}));
-      throw new Error(error.message || "API Error");
-    }
-  
-    return res.json();
-  }
-fetchData();
+  const BASE_URL = "http://localhost:4000";
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    ...options,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "API error");
+  return data;
+}
+
+export async function fetchReviews() {
+  const res = await fetch(`${BASE_URL}/reviews`, {
+    credentials: "include",
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to fetch reviews");
+  return data;
+}
+
+export async function submitReview(content, rating) {
+  const res = await fetch(`${BASE_URL}/reviews`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ content, rating }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Failed to submit review");
+  return data;
+}
+
+export async function signup(username, email, password) {
+  const res = await fetch(`${BASE_URL}/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password }),
+    credentials: "include",
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Signup failed");
+  return data;
+}
+
+export async function login(email, password) {
+  const res = await fetch(`${BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+    credentials: "include",
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Login failed");
+  return data;
+}
+
+export async function getCurrentUser() {
+  const res = await fetch(`${BASE_URL}/me`, {
+    credentials: "include",
+  });
+  const data = await res.json();
+  if (!res.ok) return null;
+  return data;
+}

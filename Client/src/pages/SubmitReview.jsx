@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-const SubmitReview = ({ userId }) => {
+export default function SubmitReview({onSubmitSuccess})  {
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setMessage(null);
     try {
       const response = await fetch("http://localhost:4000/reviews", {
         method: "POST",
@@ -16,9 +16,8 @@ const SubmitReview = ({ userId }) => {
         },
         credentials: "include", 
         body: JSON.stringify({
-          user_id: userId,
-          content: content,
-          rating: rating
+           content,
+          rating
         }),
       });
 
@@ -31,6 +30,7 @@ const SubmitReview = ({ userId }) => {
       setMessage("✅ Review submitted!");
       setContent("");
       setRating(5);
+      if (onSubmitSuccess) onSubmitSuccess();
     } catch (err) {
       console.error("Submit review error:", err);
       setMessage(`❌ ${err.message}`);
@@ -67,4 +67,4 @@ const SubmitReview = ({ userId }) => {
   );
 };
 
-export default SubmitReview;
+

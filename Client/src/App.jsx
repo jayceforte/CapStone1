@@ -8,13 +8,26 @@ import ItemDetail from "./pages/ItemDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import SubmitReview from "./pages/SubmitReview";
+import ReviewList from "./pages/ReviewList";
+import ReviewsPage from "./pages/ReviewsPage";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
+
   useEffect(() => {
-    apiFetch("/auth/me")
-    .then(setUser)
-    .catch(() => setUser(null));
+    fetch("http://localhost:4000/me", {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Not logged in");
+        return res.json();
+      })
+      .then((data) => {
+        setUserId(data.userId);
+      })
+      .catch(() => {
+        setUserId(null);
+      });
   }, []);
   
   return (
@@ -26,6 +39,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/submit" element={<SubmitReview />} />
+        <Route path="/reviews" element={<ReviewList />} />
+        <Route path="/reviews" element={<ReviewsPage />} />
       </Routes>
     </Router>
   );
