@@ -159,10 +159,16 @@ app.post("/signup", async (req, res) => {
 app.get("/restaurants", async (req, res) => {
   try {
     const result = await client.query(`
-      SELECT r.*, AVG(rv.rating)::numeric(3,1) AS average_rating
+      SELECT 
+        r.id,
+        r.name,
+        r.cuisine,
+        r.location,
+        r.image_url,
+        AVG(rv.rating)::numeric(3,1) AS average_rating
       FROM restaurants r
       LEFT JOIN reviews rv ON r.id = rv.restaurant_id
-      GROUP BY r.id
+      GROUP BY r.id, r.name, r.cuisine, r.location, r.image_url
       ORDER BY r.name
     `);
     res.json(result.rows);
@@ -171,6 +177,7 @@ app.get("/restaurants", async (req, res) => {
     res.status(500).json({ error: "Unable to load restaurants" });
   }
 });
+
 
 
 app.get("/restaurants/:id", async (req, res) => {

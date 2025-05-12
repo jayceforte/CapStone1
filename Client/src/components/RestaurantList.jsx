@@ -20,6 +20,16 @@ export default function Restaurants() {
       <div className="restaurant-grid">
         {restaurants.map((r) => (
           <Link to={`/restaurants/${r.id}`} key={r.id} className="restaurant-card">
+           <img
+  src={r.image_url}
+  alt={`${r.name} preview`}
+  className="restaurant-img"
+/>
+
+
+
+
+
             <h2>{r.name}</h2>
             <p><strong>Cuisine:</strong> {r.cuisine}</p>
             <p><strong>Location:</strong> {r.location}</p>
@@ -28,6 +38,7 @@ export default function Restaurants() {
         ))}
       </div>
     </div>
+    
   );
 }
 
