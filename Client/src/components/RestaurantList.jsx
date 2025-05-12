@@ -1,43 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import "./Restaurants.css";
 
-export default function RestaurantList() {
+export default function Restaurants() {
   const [restaurants, setRestaurants] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:4000/restaurants", {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setRestaurants(data);
-        } else {
-          throw new Error("Expected array, got something else");
-        }
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setError("❌ Could not load restaurants");
-      });
+      .then((data) => setRestaurants(data))
+      .catch((err) => console.error("Failed to fetch restaurants:", err));
   }, []);
 
-  if (error) return <p>{error}</p>;
-
   return (
-    <div>
-      <h2>Restaurants</h2>
-      <ul>
+    <div className="restaurants-page">
+      <h1>Browse All Restaurants</h1>
+      <div className="restaurant-grid">
         {restaurants.map((r) => (
-          <li key={r.id}>
-            <Link to={`/restaurants/${r.id}`}>
-              <strong>{r.name}</strong> – {r.cuisine}
-            </Link>
-          </li>
+          <Link to={`/restaurants/${r.id}`} key={r.id} className="restaurant-card">
+            <h2>{r.name}</h2>
+            <p><strong>Cuisine:</strong> {r.cuisine}</p>
+            <p><strong>Location:</strong> {r.location}</p>
+            <p><strong>Rating:</strong> {r.average_rating ? `${r.average_rating} / 5` : "Not yet rated"}</p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
+
 

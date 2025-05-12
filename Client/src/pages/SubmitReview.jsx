@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./SubmitReview.css";
 
 export default function SubmitReview({ restaurantId, onReviewSubmitted }) {
   const [content, setContent] = useState("");
@@ -8,19 +9,6 @@ export default function SubmitReview({ restaurantId, onReviewSubmitted }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
-
-console.log("Submitting review with:", {
-  content,
-  rating,
-  restaurant_id: Number(restaurantId), 
- 
-});
-
-
-    if (!restaurantId) {
-      setMessage("❌ Restaurant ID is missing");
-      return;
-    }
 
     try {
       const response = await fetch("http://localhost:4000/reviews", {
@@ -53,17 +41,16 @@ console.log("Submitting review with:", {
   };
 
   return (
-    <div>
-      <h2>Submit a Review</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
+    <div className="submit-review">
+      <h3>Submit a Review</h3>
+      {message && <p className="message">{message}</p>}
+      <form onSubmit={handleSubmit} className="review-form">
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Write your review here..."
           required
         />
-        <br />
         <label>
           Rating:
           <select
@@ -77,7 +64,6 @@ console.log("Submitting review with:", {
             ))}
           </select>
         </label>
-        <br />
         <button type="submit">Submit Review</button>
       </form>
     </div>

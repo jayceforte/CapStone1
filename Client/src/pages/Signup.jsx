@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./AuthForm.css"; // ✅ same styles used for login
 
 export default function Signup() {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -17,10 +22,9 @@ export default function Signup() {
     try {
       const response = await fetch("http://localhost:4000/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(form),
       });
 
       const data = await response.json();
@@ -32,39 +36,47 @@ export default function Signup() {
       navigate("/login");
     } catch (err) {
       console.error("Signup error:", err.message);
-      setError("API Error: " + err.message);
+      setError("❌ " + err.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Sign Up</h1>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={form.username}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Create Your Account</button>
-      {error && <p style={{ color: "purple" }}>{error}</p>}
-    </form>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
+        <h2>Create Account</h2>
+
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        <button type="submit">Sign Up</button>
+
+        {error && <p className="auth-error">{error}</p>}
+      </form>
+    </div>
   );
 }
+
