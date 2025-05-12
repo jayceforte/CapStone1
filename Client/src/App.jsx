@@ -4,12 +4,16 @@ import {apiFetch} from "./api";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import ItemDetail from "./pages/ItemDetail";
+import ReviewDetail from "./pages/ReviewDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import SubmitReview from "./pages/SubmitReview";
 import ReviewList from "./pages/ReviewList";
 import ReviewsPage from "./pages/ReviewsPage";
+import RestaurantList from "./components/RestaurantList";
+import RestaurantDetail from "./pages/RestaurantDetail";
+
+
 
 function App() {
   const [userId, setUserId] = useState(null);
@@ -35,12 +39,16 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/item/:id" element={<ItemDetail />} />
+      <Route path="/reviews/:id" element={<ReviewDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/submit" element={<SubmitReview />} />
+        {/* <Route path="/submit" element={<SubmitReview />} /> */}
         <Route path="/reviews" element={<ReviewList />} />
         <Route path="/reviews" element={<ReviewsPage />} />
+        <Route path="/restaurants" element={<RestaurantList />} />
+        <Route path="/restaurants/:id" element={<RestaurantDetail />} />
+        <Route path="/item/:id" element={<ReviewDetail />} />
+
       </Routes>
     </Router>
   );

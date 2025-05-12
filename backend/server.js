@@ -54,24 +54,24 @@ app.get("/me", (req, res) => {
 
 app.post("/reviews", async (req, res) => {
   const user_id = req.session.userId;
-  const {  content, rating } = req.body;
-  
-  console.log("SESSION:", req.session);
-  console.log("BODY:", req.body);
+  const { content, rating, restaurant_id } = req.body;
 
-  if (!user_id || !content || !rating) {
+  if (!user_id || !content || !rating || !restaurant_id) {
     return res.status(400).json({ error: "Missing fields in request body" });
   }
 
   try {
+    console.log("Received review:", { content, rating, restaurant_id });
+
     const result = await client.query(
-      `INSERT INTO reviews (user_id, content, rating, created_at)
-       VALUES ($1, $2, $3, NOW()) RETURNING *`,
-      [user_id, content, rating]
+      `INSERT INTO reviews (user_id, restaurant_id, content, rating, created_at)
+       VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
+      [user_id, restaurant_id, content, rating]
     );
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error("Error fetching user review:", err);
+    console.error("❌ Failed to insert review into DB:", err);
     res.status(500).json({ error: "Failed to fetch user review" });
   }
 });
@@ -91,6 +91,23 @@ app.get("/reviews", async (req, res) => {
     res.status(500).json({ error: "Failed to find reviews" });
   }
 });
+
+app.get("/reviews/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await client.query("SELECT * FROM reviews WHERE id = $1", [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Review not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching review:", err);
+    res.status(500).json({ error: "Server error retrieving review" });
+  }
+});
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -139,7 +156,54 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.get("/restaurants", async (req, res) => {
+  try {
+    const result = await client.query("SELECT * FROM restaurants ORDER BY name ASC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error finding restaurants:", err);
+    res.status(500).json({ error: "Failed to find restaurants" });
+  }
+});
 
+app.get("/restaurants/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const restaurantResult = await client.query(
+      "SELECT * FROM restaurants WHERE id = $1",
+      [id]
+    );
+
+    const reviewsResult = await client.query(
+      `SELECT reviews.*, users.username
+       FROM reviews
+       JOIN users ON reviews.user_id = users.id
+       WHERE restaurant_id = $1
+       ORDER BY created_at DESC`,
+      [id]
+    );
+
+    const averageResult = await client.query(
+      `SELECT AVG(rating)::numeric(3,1) AS average_rating
+       FROM reviews
+       WHERE restaurant_id = $1`,
+      [id]
+    );
+
+    res.json({
+      restaurant: restaurantResult.rows[0],
+      reviews: reviewsResult.rows,
+      average_rating: averageResult.rows[0].average_rating || null,
+    });
+  } catch (err) {
+    console.error("Error loading restaurant:", err);
+    res.status(500).json({ error: "Failed to load restaurant" });
+  }
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found", path: req.path });
+});
 
 
 

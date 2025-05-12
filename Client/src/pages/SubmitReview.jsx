@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-export default function SubmitReview({onSubmitSuccess})  {
+export default function SubmitReview({ restaurantId, onReviewSubmitted }) {
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState("");
@@ -8,29 +8,44 @@ export default function SubmitReview({onSubmitSuccess})  {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
+
+console.log("Submitting review with:", {
+  content,
+  rating,
+  restaurant_id: Number(restaurantId), 
+ 
+});
+
+
+    if (!restaurantId) {
+      setMessage("❌ Restaurant ID is missing");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:4000/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", 
+        credentials: "include",
         body: JSON.stringify({
-           content,
-          rating
+          content,
+          rating,
+          restaurant_id: Number(restaurantId),
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to submit review");
+        throw new Error(data.error || "Failed to submit review");
       }
 
-      const data = await response.json();
       setMessage("✅ Review submitted!");
       setContent("");
       setRating(5);
-      if (onSubmitSuccess) onSubmitSuccess();
+      if (onReviewSubmitted) onReviewSubmitted();
     } catch (err) {
       console.error("Submit review error:", err);
       setMessage(`❌ ${err.message}`);
@@ -56,7 +71,9 @@ export default function SubmitReview({onSubmitSuccess})  {
             onChange={(e) => setRating(Number(e.target.value))}
           >
             {[1, 2, 3, 4, 5].map((r) => (
-              <option key={r} value={r}>{r}</option>
+              <option key={r} value={r}>
+                {r}
+              </option>
             ))}
           </select>
         </label>
@@ -65,6 +82,6 @@ export default function SubmitReview({onSubmitSuccess})  {
       </form>
     </div>
   );
-};
+}
 
 
