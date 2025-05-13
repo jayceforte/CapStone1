@@ -19,7 +19,7 @@ function App() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/me", {
+    fetch("http://localhost:4001/me", {
       credentials: "include",
     })
       .then((res) => {

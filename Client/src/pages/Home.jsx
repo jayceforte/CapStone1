@@ -6,7 +6,7 @@ export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/restaurants", {
+    fetch("http://localhost:4001/restaurants", {
       credentials: "include",
     })
       .then((res) => res.json())

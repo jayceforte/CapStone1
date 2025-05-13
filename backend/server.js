@@ -9,10 +9,8 @@ const pg = require("pg");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(` Server listening on port ${PORT}`);
-});
+const PORT = process.env.PORT || 4001;
+
 
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });

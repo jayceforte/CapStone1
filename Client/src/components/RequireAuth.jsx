@@ -7,7 +7,7 @@ export default function RequireAuth({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/auth/me", {
+    fetch("http://localhost:4001/api/auth/me", {
       credentials: "include",
     })
       .then((res) => {

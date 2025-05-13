@@ -7,7 +7,7 @@ export default function Restaurants() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:4000/restaurants", {
+    fetch("http://localhost:4001/restaurants", {
       credentials: "include",
     })
       .then((res) => res.json())
