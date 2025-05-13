@@ -108,6 +108,32 @@ app.get("/reviews/:id", async (req, res) => {
   }
 });
 
+app.delete("/reviews/:id", async (req, res) => {
+  const user_id = req.session.userId;
+  const reviewId = req.params.id;
+
+  if (!user_id) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    // make sure the review belongs to the certain user
+    const result = await client.query(
+      "DELETE FROM reviews WHERE id = $1 AND user_id = $2 RETURNING *",
+      [reviewId, user_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(403).json({ error: "You can only delete your own review." });
+    }
+
+    res.json({ message: "Review deleted" });
+  } catch (err) {
+    console.error("Failed to delete review:", err);
+    res.status(500).json({ error: "Server error deleting review" });
+  }
+});
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;

@@ -10,6 +10,29 @@ export default function RestaurantDetail() {
   const [average, setAverage] = useState(null);
   const [error, setError] = useState(null);
 
+const handleDelete = async (reviewId) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete your old review?");
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`http://localhost:4000/reviews/${reviewId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || "Failed to delete your  review");
+    }
+
+    // Refresh the reviews
+    setReviews(reviews.filter((r) => r.id !== reviewId));
+  } catch (err) {
+    console.error("Delete error:", err.message);
+    alert("❌ " + err.message);
+  }
+};
+
   useEffect(() => {
     fetch(`http://localhost:4000/restaurants/${id}`, {
       credentials: "include",
@@ -49,6 +72,12 @@ export default function RestaurantDetail() {
                 <strong>{r.username}</strong> rated it {r.rating}/5
                 <p>{r.content}</p>
                 <small>{new Date(r.created_at).toLocaleString()}</small>
+              
+   <button onClick={() => handleDelete(r.id)} className="delete-button">
+   Delete
+</button>
+
+    
               </li>
             ))}
           </ul>
@@ -72,3 +101,5 @@ export default function RestaurantDetail() {
     </div>
   );
 }
+
+

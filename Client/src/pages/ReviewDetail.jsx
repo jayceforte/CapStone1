@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiFetch } from "../api";
-import "./ReviewDetail.css"; // ✅ link to CSS file
+import "./ReviewDetail.css"; 
 
 export default function ReviewDetail() {
   const { id } = useParams();

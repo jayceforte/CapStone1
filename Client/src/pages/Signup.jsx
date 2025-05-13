@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./AuthForm.css"; // ✅ same styles used for login
+import "./AuthForm.css"; 
 
 export default function Signup() {
   const [form, setForm] = useState({

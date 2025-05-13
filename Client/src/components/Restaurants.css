@@ -50,3 +50,13 @@
   border-radius: 8px;
   margin-bottom: 12px;
 }
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 24px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ff0000;
+  display: block;
+}
