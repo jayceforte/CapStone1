@@ -1,10 +1,6 @@
-
-
-const BASE_URL = "http://localhost:4001";
-
+const BASE_URL = "https://capstone1-gxtz.onrender.com";
 
 export async function apiFetch(path, options = {}) {
-  const BASE_URL = "http://localhost:4001";
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -68,3 +64,4 @@ export async function getCurrentUser() {
   if (!res.ok) return null;
   return data;
 }
+
