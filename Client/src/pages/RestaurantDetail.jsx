@@ -15,7 +15,7 @@ const handleDelete = async (reviewId) => {
   if (!confirmDelete) return;
 
   try {
-    const response = await fetch(`http://localhost:4001/reviews/${reviewId}`, {
+    const response = await fetch(`https://capstone1-gxtz.onrender.com/reviews${reviewId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -34,7 +34,7 @@ const handleDelete = async (reviewId) => {
 };
 
   useEffect(() => {
-    fetch(`http://localhost:4001/restaurants/${id}`, {
+    fetch(`https://capstone1-gxtz.onrender.com/restaurants/${id}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -86,7 +86,7 @@ const handleDelete = async (reviewId) => {
         <SubmitReview
           restaurantId={id}
           onReviewSubmitted={() => {
-            fetch(`http://localhost:4001/restaurants/${id}`, {
+            fetch(`https://capstone1-gxtz.onrender.com/restaurants/${id}`, {
               credentials: "include",
             })
               .then((res) => res.json())

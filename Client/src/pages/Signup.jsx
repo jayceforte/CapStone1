@@ -20,7 +20,7 @@ export default function Signup() {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:4001/signup", {
+      const response = await fetch("https://capstone1-gxtz.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

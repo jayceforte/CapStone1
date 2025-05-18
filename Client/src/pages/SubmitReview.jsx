@@ -11,7 +11,7 @@ export default function SubmitReview({ restaurantId, onReviewSubmitted }) {
     setMessage(null);
 
     try {
-      const response = await fetch("http://localhost:4001/reviews", {
+      const response = await fetch("https://capstone1-gxtz.onrender.com/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

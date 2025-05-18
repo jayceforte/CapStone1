@@ -32,9 +32,10 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
+  origin: ["http://localhost:5173", "https://your-frontend.onrender.com"],
+  credentials: true
 }));
+
 
 app.use(express.json());
 
@@ -151,20 +152,26 @@ app.post("/login", async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: "Missing fields" });
   }
-try {
-  const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
-  const user = result.rows[0];
 
-  if (!user || user.password !== password) {
-    return res.status(401).json({ error: "Invalid credentials" });
+  try {
+    console.log("Login attempt with email:", email);
+
+    const result = await client.query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = result.rows[0];
+    console.log("Fetched user:", user);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    req.session.userId = user.id;
+    console.log("Login success, setting session userId:", user.id);
+    res.json({ message: "Login successful" });
+
+  } catch (err) {
+    console.error("❌ login Error:", err);
+    res.status(500).json({ error: "Server error when attempting login" });
   }
-
-  req.session.userId = user.id;
-  res.json({ message: "Login successful" });
-} catch(err){
-  console.error("login Error", err);
-  res.status(500).json({error: "Server error when attempting login"});
-}
 });
 
 app.post("/signup", async (req, res) => {
@@ -255,5 +262,14 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found", path: req.path });
 });
 
+app.get("/debug-db", async (req, res) => {
+  try {
+    const result = await client.query("SELECT current_database()");
+    res.send(`Connected to DB: ${result.rows[0].current_database}`);
+  } catch (err) {
+    console.error("Debug DB Error:", err);
+    res.status(500).send("Error querying DB");
+  }
+});
 
 

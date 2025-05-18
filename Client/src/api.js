@@ -1,5 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_BASE || "http://localhost:4001";
-
+const BASE_URL = "https://capstone1-gxtz.onrender.com";
+export const API_BASE = "https://capstone1-gxtz.onrender.com";
 
 export async function apiFetch(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -65,4 +65,5 @@ export async function getCurrentUser() {
   if (!res.ok) return null;
   return data;
 }
+
 

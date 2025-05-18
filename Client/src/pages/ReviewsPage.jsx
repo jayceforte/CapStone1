@@ -8,7 +8,7 @@ export default function ReviewsPage() {
 
   const loadReviews = async () => {
     try {
-      const res = await fetch("http://localhost:4001/reviews", {
+      const res = await fetch("https://capstone1-gxtz.onrender.com/reviews", {
         credentials: "include"
       });
       const data = await res.json();

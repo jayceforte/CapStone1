@@ -6,7 +6,7 @@ export default function Home() {
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4001/restaurants", {
+    fetch("https://capstone1-gxtz.onrender.com/restaurants", {
       credentials: "include",
     })
       .then((res) => res.json())

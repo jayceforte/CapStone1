@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {apiFetch} from "./api";
+import {API_BASE} from "./api";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -18,21 +18,22 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 function App() {
   const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    fetch("http://localhost:4001/me", {
-      credentials: "include",
+useEffect(() => {
+   fetch(`${API_BASE}/me`, {
+    credentials: "include",
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Not logged in");
+      return res.json();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Not logged in");
-        return res.json();
-      })
-      .then((data) => {
-        setUserId(data.userId);
-      })
-      .catch(() => {
-        setUserId(null);
-      });
-  }, []);
+    .then((data) => {
+      setUserId(data.userId);
+    })
+    .catch((err) => {
+      console.error("Auth check failed:", err.message);
+    });
+}, []);
+
   
   return (
     <Router>
