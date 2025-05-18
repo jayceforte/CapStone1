@@ -258,10 +258,6 @@ app.get("/restaurants/:id", async (req, res) => {
   }
 });
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Route not found", path: req.path });
-});
-
 app.get("/debug-db", async (req, res) => {
   try {
     const result = await client.query("SELECT current_database()");
@@ -271,5 +267,11 @@ app.get("/debug-db", async (req, res) => {
     res.status(500).send("Error querying DB");
   }
 });
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found", path: req.path });
+});
+
+
 
 
