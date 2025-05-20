@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {API_BASE} from "./api";
+import { apiFetch } from "./api";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -19,9 +19,9 @@ function App() {
   const [userId, setUserId] = useState(null);
 
 useEffect(() => {
-   fetch(`${API_BASE}/me`, {
-    credentials: "include",
-  })
+   fetch("http://localhost:4001/me", {
+      credentials: "include",
+    })
     .then((res) => {
       if (!res.ok) throw new Error("Not logged in");
       return res.json();

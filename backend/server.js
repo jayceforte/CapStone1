@@ -17,9 +17,7 @@ app.listen(PORT, () => {
 
 const client = new pg.Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false,
 });
 
 
@@ -33,11 +31,10 @@ init();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://capstone1-2-front-end.onrender.com"
 ];
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://your-frontend.onrender.com"],
+  origin: ["http://localhost:5173", ],
   credentials: true
 }));
 
